@@ -22,6 +22,7 @@ def Start():
 	# Add in the views our plugin will support
 	Plugin.AddViewGroup("InfoList", viewMode="InfoList", mediaType="items")
 	Plugin.AddViewGroup("List", viewMode="List", mediaType="items")
+	Plugin.AddViewGroup("Photos", viewMode="List", mediaType="photos")
 	
 	# Set up our plugin's container
 	MediaContainer.art = R(ART_DEFAULT)
@@ -45,9 +46,7 @@ def MainMenu():
 		
 		api = putio.Api(api_key=api_key,api_secret=api_secret)
 		
-		items = api.get_items(offset=0)
-		for it in items:
-			dir.Append(Function(DirectoryItem(Folders, title=it.name), id=it.id))
+		listItems(id=None, dir=dir)
 		
 		dir.Append(Function(DirectoryItem(DoLogout, title='logout')))
 	
@@ -56,6 +55,28 @@ def MainMenu():
 	
 	
 	return dir
+	
+def listItems(id, dir):
+	if id != None:
+		items = api.get_items(parent_id=id, offset=0)
+	else:
+		items = api.get_items(offset=0)
+		
+	for it in items:
+		if it.type == 'folder':
+			dir.Append(Function(DirectoryItem(Folders, title=it.name), id=it.id))
+		
+		elif it.type == 'movie':
+			dir.Append(Function(VideoItem(Files, title=it.name, thumb=it.screenshot_url), url=it.get_stream_url()))
+		
+		elif it.type == 'audio':
+			dir.Append(Function(TrackItem(Files, title=it.name), url=it.get_stream_url()))
+		
+		# elif it.type == 'image':
+		# 	dir.Append(Function(PhotoItem(Files, title=it.name, subtitle='', summary=it.name, thumb=it.thumb_url), url=it.get_stream_url()))
+			
+		else:
+			Log(it.type)
 
 
 def Folders(sender, id):
@@ -63,25 +84,9 @@ def Folders(sender, id):
 	
 	item = api.get_items(id=id)[0]
 	if item.is_dir:
-		items = api.get_items(parent_id=id, offset=0)
-		for it in items:
-			if it.type == 'folder':
-				dir.Append(Function(DirectoryItem(Folders, title=it.name), id=it.id))
-			
-			elif it.type == 'movie':
-				dir.Append(Function(VideoItem(Files, title=it.name, thumb=it.screenshot_url), url=it.get_stream_url()))
-			
-			elif it.type == 'audio':
-				dir.Append(Function(TrackItem(Files, title=it.name), url=it.get_stream_url()))
-			
-			#elif it.type == 'image':
-			#	dir.Append(PhotoItem(it.get_stream_url(), title=it.name, thumb=it.thumb_url))
-			
-			else:
-				Log(it.type)
+		listItems(id=id, dir=dir)
 	
 	return dir
-
 
 def Files(sender, url):
 	return Redirect(url)
