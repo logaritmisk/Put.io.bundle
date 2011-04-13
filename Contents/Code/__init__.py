@@ -1,7 +1,3 @@
-from PMS import *
-from PMS.Objects import *
-from PMS.Shortcuts import *
-
 import putio
 
 
@@ -10,10 +6,6 @@ PLUGIN_PREFIX = "/video/putio"		# The plugin's contextual path within Plex
 
 ICON_DEFAULT = "icon-default.png"	#
 ART_DEFAULT = "art-default.jpg"		#
-
-
-api = None
-
 
 def Start():	
 	# Register our plugins request handler
@@ -29,38 +21,32 @@ def Start():
 	MediaContainer.title1 = PLUGIN_TITLE
 	DirectoryItem.thumb = R(ICON_DEFAULT)
 
-
-def CreatePrefs():
-	Prefs.Add(id='api_key', type='text', default='', label='API Key')
-	Prefs.Add(id='api_secret', type='text', default='', label='API Secret', option='hidden')
-
-
+	Dict['api'] = None
+	
 def MainMenu():
-	global api
 	
 	dir = MediaContainer(noCache=True)
 	
-	if Prefs.Get('api_key') and Prefs.Get('api_secret'):
-		api_key = Prefs.Get('api_key')
-		api_secret = Prefs.Get('api_secret')
+	if Prefs['api_key'] and Prefs['api_secret']:
+		api_key = Prefs['api_key']
+		api_secret = Prefs['api_secret']
 		
-		api = putio.Api(api_key=api_key,api_secret=api_secret)
+		Dict['api'] = putio.Api(api_key=api_key,api_secret=api_secret)
 		
 		listItems(id=None, dir=dir)
 		
-		dir.Append(Function(DirectoryItem(DoLogout, title='logout')))
+		#dir.Append(Function(DirectoryItem(DoLogout, title='logout')))
 	
 	else:
 		dir.Append(PrefsItem(title='login'))
-	
 	
 	return dir
 	
 def listItems(id, dir):
 	if id != None:
-		items = api.get_items(parent_id=id, offset=0)
+		items = Dict['api'].get_items(parent_id=id, offset=0)
 	else:
-		items = api.get_items(offset=0)
+		items = Dict['api'].get_items(offset=0)
 		
 	for it in items:
 		if it.type == 'folder':
@@ -82,7 +68,7 @@ def listItems(id, dir):
 def Folders(sender, id):
 	dir = MediaContainer(title2=sender.itemTitle)
 	
-	item = api.get_items(id=id)[0]
+	item = Dict['api'].get_items(id=id)[0]
 	if item.is_dir:
 		listItems(id=id, dir=dir)
 	
@@ -93,7 +79,6 @@ def Files(sender, url):
 
 
 def DoLogout(sender):
-	Prefs.Set('api_key', '')
-	Prefs.Set('api_secret', '')
+	#old implementation doesn't wprk in V2#
 	
 	return Redirect(PLUGIN_PREFIX)

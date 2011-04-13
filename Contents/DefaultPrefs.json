@@ -1,0 +1,15 @@
+[
+        {
+                "id":       "api_key",
+                "label":    "API Key",
+                "type":     "text",
+                "default":  ""
+        },
+        {
+                "id":       "api_secret",
+                "label":    "API Secret",
+                "type":     "text",
+                "option":   "hidden",
+                "default":  ""
+        }
+]
