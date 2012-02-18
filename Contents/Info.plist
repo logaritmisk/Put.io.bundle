@@ -24,6 +24,8 @@
 	<string>1</string>
 	<key>PlexPluginDevMode</key>
 	<string>0</string>
+	<key>PlexClientPlatforms</key>
+	<string>*</string>
 	<key>PlexPluginCodePolicy</key>
 	<string>Elevated</string>
 </dict>
