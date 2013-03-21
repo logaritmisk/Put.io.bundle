@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 30
+/svn/!svn/ver/22/trunk/iso8601
+END
+test_iso8601.py
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/22/trunk/iso8601/test_iso8601.py
+END
+iso8601.py
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/22/trunk/iso8601/iso8601.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/4/trunk/iso8601/__init__.py
+END

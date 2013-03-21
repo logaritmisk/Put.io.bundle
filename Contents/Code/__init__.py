@@ -1,13 +1,13 @@
-import putio
+import putio2
 
 
-PLUGIN_TITLE = "Put.io"				# The plugin Title
-PLUGIN_PREFIX = "/video/putio"		# The plugin's contextual path within Plex
+PLUGIN_TITLE = "Put.io"                 # The plugin Title
+PLUGIN_PREFIX = "/video/putio"          # The plugin's contextual path within Plex
 
-ICON_DEFAULT = "icon-default.png"	#
-ART_DEFAULT = "art-default.jpg"		#
+ICON_DEFAULT = "icon-default.png"
+ART_DEFAULT = "art-default.jpg"
 
-def Start():	
+def Start():
 	# Register our plugins request handler
 	Plugin.AddPrefixHandler(PLUGIN_PREFIX, MainMenu, PLUGIN_TITLE, ICON_DEFAULT, ART_DEFAULT)
 	
@@ -22,11 +22,10 @@ def Start():
 	DirectoryItem.thumb = R(ICON_DEFAULT)
 
 	Dict['api'] = None
-	
+
 def MainMenu():
-	
 	dir = MediaContainer(noCache=True)
-	
+        
 	if Prefs['api_key'] and Prefs['api_secret']:
 		api_key = Prefs['api_key']
 		api_secret = Prefs['api_secret']
@@ -41,13 +40,13 @@ def MainMenu():
 		dir.Append(PrefsItem(title='login'))
 	
 	return dir
-	
+
 def listItems(id, dir):
 	if id != None:
 		items = Dict['api'].get_items(parent_id=id, offset=0)
 	else:
 		items = Dict['api'].get_items(offset=0)
-		
+        
 	for it in items:
 		if it.type == 'folder':
 			dir.Append(Function(DirectoryItem(Folders, title=it.name), id=it.id))
@@ -60,10 +59,9 @@ def listItems(id, dir):
 		
 		# elif it.type == 'image':
 		# 	dir.Append(Function(PhotoItem(Files, title=it.name, subtitle='', summary=it.name, thumb=it.thumb_url), url=it.get_stream_url()))
-			
+                
 		else:
 			Log(it.type)
-
 
 def Folders(sender, id):
 	dir = MediaContainer(title2=sender.itemTitle)
@@ -77,8 +75,5 @@ def Folders(sender, id):
 def Files(sender, url):
 	return Redirect(url)
 
-
 def DoLogout(sender):
-	#old implementation doesn't wprk in V2#
-	
 	return Redirect(PLUGIN_PREFIX)
