@@ -47,36 +47,34 @@ def MainMenu():
 
 def listItems(id, dir):
     if id != None:
-        items = Dict['api'].File.items(parent_id=id)
-	else:
-        items = Dict['api'].File.items()
+        items = Dict['api'].File.list(parent_id=id)
+    else:
+        items = Dict['api'].File.list()
     
     for it in items:
         if it.content_type == 'application/x-directory':
             dir.Append(Function(DirectoryItem(Folders, title=it.name), id=it.id))
-		
-		#elif it.content_type == 'video/x-matroska':
-		#	dir.Append(Function(VideoItem(Files, title=it.name, thumb=it.screenshot), url=it.get_stream_url()))
-		#
-		#elif it.type == 'audio':
-		#	dir.Append(Function(TrackItem(Files, title=it.name), url=it.get_stream_url()))
-		#
-		# elif it.type == 'image':
-		# 	dir.Append(Function(PhotoItem(Files, title=it.name, subtitle='', summary=it.name, thumb=it.thumb_url), url=it.get_stream_url()))
+        
+        elif it.content_type == 'video/x-matroska':
+            dir.Append(Function(VideoItem(Files, title=it.name, thumb=it.screenshot), id=it.id))
         #
-		else:
-			Log(it.type)
+        #elif it.type == 'audio':
+        #	dir.Append(Function(TrackItem(Files, title=it.name), url=it.get_stream_url()))
+        #
+        # elif it.type == 'image':
+        # 	dir.Append(Function(PhotoItem(Files, title=it.name, subtitle='', summary=it.name, thumb=it.thumb_url), url=it.get_stream_url()))
+        #
+        else:
+            Log(it.content_type)
 
 def Folders(sender, id):
     dir = MediaContainer(title2=sender.itemTitle)
-	
-    #item = Dict['api'].File.get(id=id)
-    #if item.is_dir:
-    #    listItems(id=id, dir=dir)
-	
-	return dir
+    
+    listItems(id=id, dir=dir)
+    
+    return dir
 
-def Files(sender, url):
+def Files(sender, id):
 	return Redirect(url)
 
 def DoLogout(sender):
