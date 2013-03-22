@@ -8,30 +8,6 @@ Data structures that power Requests.
 
 """
 
-import os
-from itertools import islice
-
-
-class IteratorProxy(object):
-    """docstring for IteratorProxy"""
-    def __init__(self, i):
-        self.i = i
-        # self.i = chain.from_iterable(i)
-
-    def __iter__(self):
-        return self.i
-
-    def __len__(self):
-        if hasattr(self.i, '__len__'):
-            return len(self.i)
-        if hasattr(self.i, 'len'):
-            return self.i.len
-        if hasattr(self.i, 'fileno'):
-            return os.fstat(self.i.fileno()).st_size
-
-    def read(self, n):
-        return "".join(islice(self.i, None, n))
-
 
 class CaseInsensitiveDict(dict):
     """Case-insensitive Dictionary
@@ -42,7 +18,7 @@ class CaseInsensitiveDict(dict):
     @property
     def lower_keys(self):
         if not hasattr(self, '_lower_keys') or not self._lower_keys:
-            self._lower_keys = dict((k.lower(), k) for k in list(self.keys()))
+            self._lower_keys = dict((k.lower(), k) for k in self.iterkeys())
         return self._lower_keys
 
     def _clear_lower_keys(self):
@@ -54,7 +30,7 @@ class CaseInsensitiveDict(dict):
         self._clear_lower_keys()
 
     def __delitem__(self, key):
-        dict.__delitem__(self, self.lower_keys.get(key.lower(), key))
+        dict.__delitem__(self, key)
         self._lower_keys.clear()
 
     def __contains__(self, key):
@@ -70,7 +46,6 @@ class CaseInsensitiveDict(dict):
             return self[key]
         else:
             return default
-
 
 class LookupDict(dict):
     """Dictionary lookup object."""
