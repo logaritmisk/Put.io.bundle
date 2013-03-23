@@ -84,7 +84,7 @@ class Client(object):
         self.File     = type('File',     (_File,),     attributes)
         self.Transfer = type('Transfer', (_Transfer,), attributes)
     
-    def request(self, path, method='GET', params=None, data=None, files=None, headers=None, raw=False):
+    def request(self, path, method='GET', params=None, data=None, files=None, headers=None, raw=False, allow_redirects=True):
         '''
         Wrapper around requests.request()
 
@@ -101,7 +101,7 @@ class Client(object):
         url = API_URL + path
         logger.debug('url: %s', url)
         
-        r = requests.request(method, url, params=params, data=data, files=files, headers=headers, allow_redirects=True)
+        r = requests.request(method, url, params=params, data=data, files=files, headers=headers, allow_redirects=allow_redirects)
         logger.debug('response: %s', r)
         
         if raw:
@@ -110,7 +110,7 @@ class Client(object):
         logger.debug('content: %s', r.content)
         try:
             r = json.loads(r.content)
-        except ValueError:            
+        except ValueError:
             raise Exception('Server didn\'t send valid JSON:\n%s\n%s' % (r, r.content))
         
         if r['status'] == 'ERROR':
@@ -168,22 +168,32 @@ class _File(_BaseResource):
         '''Helper function for listing inside of directory'''
         return self.list(parent_id=self.id)
     
+    @property
+    def stream_url(self):
+        r = self.client.request('/files/%s/stream' % self.id, raw=True, allow_redirects=False)
+        return r.headers['location']
+    
+    @property
+    def download_url(self):
+        r = self.client.request('/files/%s/download' % self.id, raw=True, allow_redirects=False)
+        return r.headers['location']
+    
     def download(self, dest='.', range=None):
         if range:
             headers = {'Range': 'bytes=%s-%s' % range}
         else:
             headers = None
-            
-        r = self.client.request('/files/%s/download' % self.id, raw=True, headers=headers)
+        
+        r = self.client.request(self.download_url, raw=True, headers=headers)
         
         if range:
             return r.content
-            
+        
         filename = re.match('attachment; filename\="(.*)"', r.headers['Content-Disposition']).groups()[0]
         with open(os.path.join(dest, filename), 'wb') as f:
             for data in r.iter_content():
                 f.write(data)
-
+    
     def delete(self):
         return self.client.request('/files/%s/delete' % self.id)
     
