@@ -60,6 +60,7 @@ def ParseDirectory(id, name):
 @route('/video/putio/lookup')
 def Lookup(id):
     oc = ObjectContainer()
+    id = int(id)
     
     client = putio2.Client(Prefs['access_token'])
     f = client.File.get(id)
