@@ -26,6 +26,7 @@ def MainMenu():
 @route('/video/putio/directory/{id}')
 def ParseDirectory(id, name):
     oc = ObjectContainer(title1 = name, view_group = 'InfoList')
+    oc.add(PrefsObject(title = L('Preferences')))
     
     client = putio2.Client(Prefs['access_token'])
     
