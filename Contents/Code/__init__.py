@@ -29,7 +29,13 @@ def ParseDirectory(id, name):
 
     oc.add(PrefsObject(title = L('Preferences')))
 
-    client = putio2.Client(Prefs['access_token'])
+    token = Prefs['access_token']
+    if token == "":
+        Log.Info("login olunmamis hic!")
+        return ObjectContainer(header="Login", message="Enter your username and password in Preferences.")
+
+    client = putio2.Client(token)
+
 
     try:
         for f in client.File.list(id):
