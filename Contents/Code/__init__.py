@@ -32,7 +32,7 @@ def ParseDirectory(id, name):
     token = Prefs['access_token']
     if token == "":
         Log.Info("login olunmamis hic!")
-        return ObjectContainer(header="Login", message="Enter your username and password in Preferences.")
+        return ObjectContainer(header="Login", message="Enter your access token in Preferences.")
 
     client = putio2.Client(token)
 
