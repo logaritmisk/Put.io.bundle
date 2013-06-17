@@ -25,22 +25,14 @@ def MainMenu():
 
 @route('/video/putio/directory/{id}')
 def ParseDirectory(id, name):
-    Log.Info("**************kedilerimiz")
-
     oc = ObjectContainer(title1 = name, view_group = 'InfoList')
-
 
     oc.add(PrefsObject(title = L('Preferences')))
 
-
     client = putio2.Client(Prefs['access_token'])
-
-    Log.Info("*********kopeklerimiz")
 
     try:
         for f in client.File.list(id):
-            Log.Info("*********aha fora girdik")
-
             if f.content_type == 'application/x-directory':
                 oc.add(DirectoryObject(
                     key = Callback(ParseDirectory, id = f.id, name = f.name),
@@ -64,11 +56,9 @@ def ParseDirectory(id, name):
             
             else:
                 Log.Info("Unsupported content type '%s'" % f.content_type)
-
     except:
-        pass
-    
-    Log.Info("****** oc yi return edicem")
+        Log.Exception("Files couldn't fetch. Access token is wrong or missing.")
+
     return oc
 
 

@@ -2,7 +2,7 @@
     {
         "id": "access_token",
         "type": "text",
-        "label":  "Access Token",
+        "label":  "Access Token (Get it from <a target='_blank' href='http://put.io/v2/oauth2/authenticate?client_id=28&response_type=oob&redirect_uri=na'>here</a>.)",
         "default":  ""
     }
 ]
