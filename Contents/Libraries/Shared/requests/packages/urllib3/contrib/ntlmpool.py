@@ -1,16 +1,13 @@
-# urllib3/contrib/ntlmpool.py
-# Copyright 2008-2011 Andrey Petrov and contributors (see CONTRIBUTORS.txt)
-#
-# This module is part of urllib3 and is released under
-# the MIT License: http://www.opensource.org/licenses/mit-license.php
-
 """
 NTLM authenticating pool, contributed by erikcederstran
 
 Issue #10, see: http://code.google.com/p/urllib3/issues/detail?id=10
 """
 
-import httplib
+try:
+    from http.client import HTTPSConnection
+except ImportError:
+    from httplib import HTTPSConnection
 from logging import getLogger
 from ntlm import ntlm
 
@@ -30,7 +27,7 @@ class NTLMConnectionPool(HTTPSConnectionPool):
     def __init__(self, user, pw, authurl, *args, **kwargs):
         """
         authurl is a random URL on the server that is protected by NTLM.
-        user is the Windows user, probably in the DOMAIN\username format.
+        user is the Windows user, probably in the DOMAIN\\username format.
         pw is the password for the user.
         """
         super(NTLMConnectionPool, self).__init__(*args, **kwargs)
@@ -53,7 +50,7 @@ class NTLMConnectionPool(HTTPSConnectionPool):
         req_header = 'Authorization'
         resp_header = 'www-authenticate'
 
-        conn = httplib.HTTPSConnection(host=self.host, port=self.port)
+        conn = HTTPSConnection(host=self.host, port=self.port)
 
         # Send negotiation message
         headers[req_header] = (

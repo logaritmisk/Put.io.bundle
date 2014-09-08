@@ -35,7 +35,6 @@ def ParseDirectory(id, name):
     
     client = putio.Client(token)
     
-    
     try:
         for f in client.File.list(id):
             if f.content_type == 'application/x-directory':
