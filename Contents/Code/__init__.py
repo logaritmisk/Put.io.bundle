@@ -1,4 +1,4 @@
-import putio2
+import putio
 
 
 NAME = 'Put.io'
